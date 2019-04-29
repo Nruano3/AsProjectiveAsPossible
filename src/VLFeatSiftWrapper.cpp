@@ -35,7 +35,7 @@ void detectSiftMatchWithVLFeat(const char* img1_path, const char* img2_path, Eig
 
 int detectSiftAndCalculateDescriptor(const char* img_path, double* &kp, vl_uint8* &descr) {
 
-  Mat img = imread(img_path, CV_LOAD_IMAGE_GRAYSCALE);
+  Mat img = imread(img_path, IMREAD_GRAYSCALE);
   int height = img.size[0];
   int width = img.size[1];
   float *data = (float*) malloc(height*width*sizeof(float));

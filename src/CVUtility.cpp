@@ -4,6 +4,7 @@
 using namespace cv;
 using namespace Eigen;
 using namespace std;
+using namespace cv::xfeatures2d;
 
 void getColorSubpixelRGB(const Mat &image, float x, float y, int width, int height, uint8_t& r, uint8_t& g, uint8_t& b) {
     int x_int = (int)x;
@@ -49,16 +50,26 @@ void displayMat(const Mat& display) {
 void detectSiftMatchWithOpenCV(const char* img1_path, const char* img2_path, MatrixXf &match) {
   Mat img1 = imread(img1_path);   
   Mat img2 = imread(img2_path);   
-
-  SiftFeatureDetector detector;
-  SiftDescriptorExtractor extractor;
+  
+  // Previous Code
+  //SiftFeatureDetector detector;
+  //SiftDescriptorExtractor extractor;
+  //vector<KeyPoint> key1;
+  //vector<KeyPoint> key2;
+  //Mat desc1, desc2;
+  //detector.detect(img1, key1);
+  //detector.detect(img2, key2);
+  //extractor.compute(img1, key1, desc1);
+  //extractor.compute(img2, key2, desc2);
+  
   vector<KeyPoint> key1;
   vector<KeyPoint> key2;
   Mat desc1, desc2;
-  detector.detect(img1, key1);
-  detector.detect(img2, key2);
-  extractor.compute(img1, key1, desc1);
-  extractor.compute(img2, key2, desc2);
+  Ptr<Feature2D> f2d = xfeatures2d::SIFT::create();
+  f2d->detect(img1, key1);
+  f2d->detect(img2, key2);
+  f2d->compute(img1, key1, desc1);
+  f2d->compute(img2, key2, desc2);
 
   FlannBasedMatcher matcher;
   vector<DMatch> matches;

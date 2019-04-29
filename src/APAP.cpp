@@ -133,7 +133,8 @@ void warpAndFuseImageAPAP(const Mat &img1, const Mat &img2, const MatrixXf &H, i
       for (xindex = 0; (xindex+1) < X.rows() && j>= X[xindex]; xindex++);
       for (yindex = 0; (yindex+1) < Y.rows() && i>= Y[yindex]; yindex++);
 
-      int Hindex = yindex*Y.rows()+xindex;
+      // EDIT - Code had double define variable. Commented one. Test result.
+      //int Hindex = yindex*Y.rows()+xindex;
       int Hindex = 0;
       float div = ((j-offX)*H(Hindex, 6)+(i-offY)*H(Hindex, 7)+H(Hindex, 8));
       float x = ((j-offX)*H(Hindex, 0) + (i-offY)*H(Hindex, 1)+H(Hindex, 2))/div;
