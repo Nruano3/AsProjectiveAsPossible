@@ -257,8 +257,8 @@ int main() {
   Matrix3f T1, T2;
   Mat img1, img2;
   int offX, offY, cw, ch;
-  const char* img1_path = "/home/xinsun/Code/APAP_C/image/set2/u_7_25.jpg";
-  const char* img2_path = "/home/xinsun/Code/APAP_C/image/set2/u_8_25.jpg";
+  const char* img1_path = "/home/uav/AsProjectiveAsPossible/image/set2/u_7_25.jpg";
+  const char* img2_path = "/home/uav/AsProjectiveAsPossible/image/set2/u_8_25.jpg";
   //const char* img1_path = "/home/xinsun/Code/RedsunImg/0/u_3_25.jpg";
   //const char* img2_path = "/home/xinsun/Code/RedsunImg/0/u_4_25.jpg";
   displayResult = true;
