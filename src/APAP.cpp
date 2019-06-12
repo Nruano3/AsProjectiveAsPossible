@@ -1,11 +1,13 @@
 #include "APAP.h"
-
 using namespace cv;
 using namespace Eigen;
 using namespace std;
 
 bool saveData;
 bool displayResult;
+const char* image_path = "/home/uav/AsProjectiveAsPossible/image/EO-frames/";
+string str = image_path + string("../../build/Global.jpg");
+const char* global_image = str.c_str();
 
 void drawMatch(Mat &img, const MatrixXf &match, const Matrix3f &inv_T1, const Matrix3f &inv_T2) {
   int height = img.size[0];
@@ -111,7 +113,7 @@ void warpAndFuseImage(const Mat &img1, const Mat &img2, const Matrix3f &H, int &
   if (displayResult)
     displayMat(linearFusion);
   if (saveData)
-    imwrite("/home/xinsun/Code/APAP_C/build/Global.jpg", linearFusion);
+    imwrite(global_image, linearFusion);
 }
 
 void warpAndFuseImageAPAP(const Mat &img1, const Mat &img2, const MatrixXf &H, int offX, int offY, int cw, int ch, const ArrayXf &X, const ArrayXf &Y) {
@@ -195,14 +197,15 @@ int GlobalHomography(const char *img1_path, const char *img2_path, MatrixXf &inl
     drawMatch(display, match, T1.inverse(), T2.inverse());
     displayMat(display);
 
-    combineMat(display, img1, img2);
-    drawMatch(display, inlier, T1.inverse(), T2.inverse());
-    displayMat(display);
+    //combineMat(display, img1, img2);
+    //drawMatch(display, inlier, T1.inverse(), T2.inverse());
+    //displayMat(display);
   }
 
   Matrix3f Hg = T2.inverse()*H*T1;
-
+  printf("before warp and fuse image");
   warpAndFuseImage(img1, img2, Hg, offX, offY, cw, ch);
+  printf("Inside GlobalHomography");
 }
 
 void APAP(const MatrixXf &inlier, const MatrixXf &A, const Matrix3f &T1, const Matrix3f &T2, int offX, int offY, int cw, int ch, const Mat &img1, const Mat &img2) {
@@ -251,20 +254,36 @@ struct Data {
   Data(float _residue, size_t _index):residue(_residue), index(_index){}
 };
 
+inline bool file_exist(const string& filename) {
+  ifstream file(filename);
+  return file ? true : false;
+}
+
 int main() {
 
   MatrixXf inlier, A;
   Matrix3f T1, T2;
   Mat img1, img2;
   int offX, offY, cw, ch;
-  const char* img1_path = "/home/uav/AsProjectiveAsPossible/image/set2/u_7_25.jpg";
-  const char* img2_path = "/home/uav/AsProjectiveAsPossible/image/set2/u_8_25.jpg";
-  //const char* img1_path = "/home/xinsun/Code/RedsunImg/0/u_3_25.jpg";
-  //const char* img2_path = "/home/xinsun/Code/RedsunImg/0/u_4_25.jpg";
-  displayResult = true;
+  string str1= image_path + string("/frame0000.jpg");//set2/u_7_25.jpg";
+  const char* img1_path = str1.c_str();
+  string str2 = image_path + string("/frame0001.jpg"); //set2/u_8_25.jpg";
+  const char* img2_path = str2.c_str();
+  displayResult = false;
   saveData = true;
   GlobalHomography(img1_path, img2_path, inlier, A, T1, T2, offX, offY, cw, ch, img1, img2);
   APAP(inlier, A, T1, T2, offX, offY, cw, ch, img1, img2);
+  printf("Have gotten through APAP");
+  int counter = 2;
+  string str3 = image_path + string("/frame0002.jpg");
+  const char* image = str3.c_str();
+  while(file_exist(image)) {
+   printf("Inside while loop");
+   string _str = image_path + string("/frame%.4d", counter++);
+   image = _str.c_str();
+   GlobalHomography(image, global_image, inlier, A, T1, T2, offX, offY, cw, ch, img1, img2);
+   APAP(inlier, A, T1, T2, offX, offY, cw, ch, img1, img2);
+  }
 
   return 0;
 }
